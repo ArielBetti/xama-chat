@@ -1,35 +1,40 @@
-import { TGoogleUserMetadata } from "@/interfaces";
+import { IUser } from "@/interfaces";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type AuthStore = {
-  user: TGoogleUserMetadata | null;
+  user: IUser | null;
   actions: {
-    setUser: (user: TGoogleUserMetadata) => void;
+    setUser: (user: IUser) => void;
     logout: () => void;
   };
 };
 
 const initialState = {
   user: {
-    avatar_url: "",
-    email: "",
-    email_verified: false,
-    full_name: "",
     name: "",
-    iss: "",
+    email: "",
     picture: "",
-    provider_id: "",
-    sub: "",
   },
 };
 
-const useAuthStore = create<AuthStore>()((set) => ({
-  ...initialState,
-  actions: {
-    setUser: (user) => set({ user }),
-    logout: () => set({ ...initialState }),
-  },
-}));
+const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      actions: {
+        setUser: (user) => set({ user }),
+        logout: () => set({ ...initialState }),
+      },
+    }),
+    {
+      name: "user-storage",
+      partialize: (state) => ({
+        user: state.user,
+      }),
+    }
+  )
+);
 
-export const useUser = () => useAuthStore(state => state.user)
-export const useAuthActions = () => useAuthStore(state => state.actions);
+export const useUser = () => useAuthStore((state) => state.user);
+export const useAuthActions = () => useAuthStore((state) => state.actions);
