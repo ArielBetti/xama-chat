@@ -1,3 +1,9 @@
+export interface IUser {
+  name: string,
+  email: string,
+  picture?: string,
+}
+
 export interface TGoogleUserEndpoint {
   id: string
   aud: string
