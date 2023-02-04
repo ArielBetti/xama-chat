@@ -1,4 +1,4 @@
-import { ProfilePicture } from "@/components";
+import { ProfilePicture, Sidebar } from "@/components";
 import useAmountAuthRoute from "@/hooks/useAmountAuthRoute";
 import { supabase } from "@/lib/initSupabase";
 import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
@@ -18,7 +18,7 @@ export default function Teste() {
         url={`${userLoader?.picture}`}
         fallback={`${userLoader?.name}`}
       />
-      dash
+      <Sidebar user={userLoader || null} header={<h1>Channels</h1>} />
       <button onClick={() => test()}>get</button>
       <button onClick={() => signOut.mutate()}>Sair</button>
     </>
