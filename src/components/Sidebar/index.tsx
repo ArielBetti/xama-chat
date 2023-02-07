@@ -1,13 +1,24 @@
+import {
+  ArrowLeftOnRectangleIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/outline";
 import React from "react";
 import ProfilePicture from "../ProfilePicture";
 import UserStatus from "../UserStatus";
 import { TSidebar } from "./types";
 
+// radix: components
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import PopMenu from "../PopMenu";
+import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
+
 const Sidebar = ({ header, user }: TSidebar) => {
+  const logout = useSignOutUserMutation();
+
   return (
-    <div className="max-w-xs w-full fixed left-0 top-0 bg-black-piano-1 h-full flex flex-col justify-start items-center shadow-[0px_0px_5px_] shadow-black-piano-1">
-      <div className="shadow-[-1px_0px_5px] h-14 shadow-black/80 w-full flex items-center justify-start">
-        <div className="p-4">{header}</div>
+    <div className="z-10 md:flex hidden max-w-xs w-full bg-black-piano-1/80 backdrop-blur-lg h-full flex-col justify-start items-center shadow-[0px_0px_5px_] shadow-black-piano-1">
+      <div className="h-14 w-full flex items-center justify-start">
+        <div className="px-4">{header}</div>
       </div>
       <div className="h-full p-4 flex flex-col w-full overflow-auto gap-2">
         <button className="flex px-2 py-4 bg-zinc-800 rounded-md shadow-md">
@@ -16,8 +27,8 @@ const Sidebar = ({ header, user }: TSidebar) => {
           </div>
         </button>
       </div>
-      <div className="p-4 items-end justify-start bg-black-piano-2 w-full flex object-cover">
-        <div className="flex items-center justify-between">
+      <div className="px-4 h-20 items-center justify-start bg-black-piano-2 w-full flex object-cover">
+        <div className="w-full flex items-center justify-between">
           <div className="flex items-start justify-start gap-2">
             <ProfilePicture
               url={`${user?.picture}`}
@@ -30,6 +41,15 @@ const Sidebar = ({ header, user }: TSidebar) => {
               <UserStatus status="OFFLINE" />
             </div>
           </div>
+          <PopMenu>
+            <DropdownMenuItem
+              onClick={() => logout.mutate()}
+              className="cursor-pointer shadow-md bg-red-600 gap-2 w-full flex items-center justify-start p-2 rounded-md"
+            >
+              <ArrowLeftOnRectangleIcon className="h-5 w-5" />
+              Sair
+            </DropdownMenuItem>
+          </PopMenu>
         </div>
       </div>
     </div>
