@@ -1,3 +1,5 @@
+'use client'
+
 import { IUser } from "@/interfaces";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -12,6 +14,7 @@ type AuthStore = {
 
 const initialState = {
   user: {
+    sessionId: "",
     name: "",
     email: "",
     picture: "",
@@ -24,7 +27,9 @@ const useAuthStore = create<AuthStore>()(
       ...initialState,
       actions: {
         setUser: (user) => set({ user }),
-        logout: () => set({ ...initialState }),
+        logout: () => {
+          set({ ...initialState })
+        },
       },
     }),
     {

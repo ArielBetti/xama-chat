@@ -1,3 +1,5 @@
+"use client";
+
 import Avvvatars from "avvvatars-react";
 
 // radix: components
@@ -15,9 +17,7 @@ const ProfilePicture = ({ fallback, url }: TProfilePicture) => {
         src={url}
         alt={`user profile picture`}
       />
-      <Avatar.Fallback
-        delayMs={600}
-      >
+      <Avatar.Fallback delayMs={600}>
         <Avvvatars radius={5} value={fallback} />
       </Avatar.Fallback>
     </Avatar.Root>

@@ -1,7 +1,6 @@
-import {
-  ArrowLeftOnRectangleIcon,
-  EllipsisVerticalIcon,
-} from "@heroicons/react/24/outline";
+"use client";
+
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import ProfilePicture from "../ProfilePicture";
 import UserStatus from "../UserStatus";
@@ -11,8 +10,19 @@ import { TSidebar } from "./types";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import PopMenu from "../PopMenu";
 import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
+import { useGetChannelsInConnectionsQuery } from "@/queries/useGetChannelsInConnectionsQuery";
+import { useChannel, useChannelActions } from "@/store/channel";
+import { supabase } from "@/lib/initSupabase";
 
-const Sidebar = ({ header, user }: TSidebar) => {
+const Sidebar = ({ header, user, userStatus }: TSidebar) => {
+  const currentChannel = useChannel();
+  const { setchannel } = useChannelActions();
+
+  const {
+    data: channels,
+    error,
+    isFetching,
+  } = useGetChannelsInConnectionsQuery();
   const logout = useSignOutUserMutation();
 
   return (
@@ -21,11 +31,42 @@ const Sidebar = ({ header, user }: TSidebar) => {
         <div className="px-4">{header}</div>
       </div>
       <div className="h-full p-4 flex flex-col w-full overflow-auto gap-2">
-        <button className="flex px-2 py-4 bg-zinc-800 rounded-md shadow-md">
-          <div className="whitespace-nowrap truncate">
-            <span>teste</span>
-          </div>
-        </button>
+        {channels?.data?.map((item) =>
+          item?.id === currentChannel?.id ? (
+            <button
+              key={item?.id}
+              disabled={currentChannel?.id === item?.id}
+              onClick={() =>
+                setchannel({
+                  id: item?.id,
+                  title: item?.slug,
+                  description: item?.description,
+                })
+              }
+              className="flex px-2 py-4 bg-blue-700/50 border border-blue-400 rounded-md shadow-md"
+            >
+              <div className="whitespace-nowrap truncate">
+                <span>{item?.slug}</span>
+              </div>
+            </button>
+          ) : (
+            <button
+              key={item?.id}
+              onClick={() =>
+                setchannel({
+                  id: item?.id,
+                  title: item?.slug,
+                  description: item?.description,
+                })
+              }
+              className="flex px-2 py-4 bg-zinc-800 rounded-md shadow-md"
+            >
+              <div className="whitespace-nowrap truncate">
+                <span>{item?.slug}</span>
+              </div>
+            </button>
+          )
+        )}
       </div>
       <div className="px-4 h-20 items-center justify-start bg-black-piano-2 w-full flex object-cover">
         <div className="w-full flex items-center justify-between">
@@ -38,7 +79,7 @@ const Sidebar = ({ header, user }: TSidebar) => {
               <h2 className="max-w-[120px] whitespace-nowrap truncate">
                 {user?.name}
               </h2>
-              <UserStatus status="OFFLINE" />
+              <UserStatus status={userStatus} />
             </div>
           </div>
           <PopMenu>

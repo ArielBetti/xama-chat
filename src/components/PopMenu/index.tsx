@@ -1,3 +1,5 @@
+'use client'
+
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 

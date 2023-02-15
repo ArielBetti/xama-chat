@@ -1,3 +1,4 @@
+'use client'
 import { IUser } from '@/interfaces';
 import { useUser } from '@/store/user';
 import { useEffect, useState } from 'react'
