@@ -1,9 +1,9 @@
 // import { supabase } from '@/lib/initSupabase';
-import { supabase } from '@/lib/initSupabase';
-import { ROUTES } from '@/routes';
-import { useAuthActions } from '@/store/user';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
+import { supabase } from "@/lib/initSupabase";
+import { ROUTES } from "@/routes";
+import { useAuthActions } from "@/store/user";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export const useSignOutUserMutation = () => {
   const router = useRouter();
@@ -14,7 +14,10 @@ export const useSignOutUserMutation = () => {
     mutationFn: () => supabase.auth.signOut(),
     onSuccess: () => {
       logout();
-      router.push(ROUTES.LOGIN);
+
+      setTimeout(() => {
+        router.push(ROUTES.LOGIN);
+      }, 1200);
     },
   });
 };
