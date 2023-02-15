@@ -1,5 +1,6 @@
+"use client";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // routes
 import { ROUTES } from "@/routes";
@@ -13,19 +14,22 @@ import { useGetUserSessionQuery } from "@/queries/useGetUserSessionQuery";
 
 // components
 import { Button, LoadingStatus } from "@/components";
+import useAmountAuthRoute from "@/hooks/useAmountAuthRoute";
+import { supabase } from "@/lib/initSupabase";
 
 // ::
 const Home = () => {
   const router = useRouter();
-  const user = useUser();
+  const userLoader = useUser();
 
   const userSession = useGetUserSessionQuery();
   const signWithGoogle = useSignMutation();
 
   useEffect(() => {
-    userSession.refetch();
-    if (user?.email) router.push(ROUTES.DASHBOARD);
-  }, [user]);
+    if (userLoader?.email) {
+      router.push(ROUTES.DASHBOARD);
+    }
+  }, [userLoader]);
 
   return (
     <main className="pattern-wavy pattern-blue-500 dark:pattern-zinc-800 dark:pattern-bg-zinc-900 pattern-bg-zinc-900 pattern-opacity-100 pattern-size-16">
