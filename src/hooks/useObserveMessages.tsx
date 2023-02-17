@@ -27,7 +27,6 @@ const useObserveMessages = (channelId: number) => {
 
   useEffect(() => {
     setMessages([]);
-    // setMessages(historyMessages);
     getHistoryMessages();
 
     if (channelId) {

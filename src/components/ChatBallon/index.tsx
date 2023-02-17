@@ -10,7 +10,7 @@ const ChatBallon = ({ message }: TChatBallon) => {
   const { userLoader } = useAmountAuthRoute();
 
   return (
-    <div className="border-t border-zinc-800 p-5 flex py-5 max-w-7xl justify-start">
+    <div className="border-t border-zinc-800 flex py-5 max-w-7xl justify-start">
       <div className="flex gap-5 items-start justify-start md:flex-nowrap flex-wrap">
         <ProfilePicture
           url={`${message?.users?.picture}`}

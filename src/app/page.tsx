@@ -43,7 +43,7 @@ const Home = () => {
           </div>
           <div className="w-full flex gap-2 flex-wrap justify-center">
             <Button
-              className="max-w-xs w-full font-semibold bg-blue-600 border-b-4 border-blue-900"
+              className="max-w-xs w-full font-semibold"
               onClick={() => signWithGoogle.mutate("google")}
             >
               Login with Google

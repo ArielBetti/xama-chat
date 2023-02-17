@@ -1,6 +1,9 @@
 "use client";
 
-import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftOnRectangleIcon,
+  PlusSmallIcon,
+} from "@heroicons/react/24/outline";
 import React from "react";
 import ProfilePicture from "../ProfilePicture";
 import UserStatus from "../UserStatus";
@@ -12,23 +15,33 @@ import PopMenu from "../PopMenu";
 import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
 import { useGetChannelsInConnectionsQuery } from "@/queries/useGetChannelsInConnectionsQuery";
 import { useChannel, useChannelActions } from "@/store/channel";
-import { supabase } from "@/lib/initSupabase";
+import { useCreateChannelMutation } from "@/queries/useCreateChannelMutation";
 
 const Sidebar = ({ header, user, userStatus }: TSidebar) => {
+  const { mutate: handleCreateChannel } = useCreateChannelMutation();
   const currentChannel = useChannel();
   const { setchannel } = useChannelActions();
 
   const {
     data: channels,
-    error,
-    isFetching,
   } = useGetChannelsInConnectionsQuery();
   const logout = useSignOutUserMutation();
 
   return (
     <div className="z-10 md:flex hidden max-w-xs w-full bg-black-piano-1/80 backdrop-blur-lg h-full flex-col justify-start items-center shadow-[0px_0px_5px_] shadow-black-piano-1">
-      <div className="h-14 w-full flex items-center justify-start">
-        <div className="px-4">{header}</div>
+      <div className="p-4 h-14 w-full flex items-center justify-between">
+        <div>{header}</div>
+        <button
+          onClick={() =>
+            handleCreateChannel({
+              description: "qualquer coisa",
+              slug: "Teste 1",
+              userId: `${user?.sessionId}`,
+            })
+          }
+        >
+          <PlusSmallIcon className="h-6 w-6" />
+        </button>
       </div>
       <div className="h-full p-4 flex flex-col w-full overflow-auto gap-2">
         {channels?.data?.map((item) =>

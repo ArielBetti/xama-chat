@@ -11,18 +11,31 @@ import useObserveMessages from "@/hooks/useObserveMessages";
 import { useChannel } from "@/store/channel";
 
 // components
-import { Button, ChatBallon, Header, Sidebar, TextEditor } from "@/components";
+import {
+  Button,
+  ChatBallon,
+  Header,
+  LoadingStatus,
+  Sidebar,
+  TextEditor,
+} from "@/components";
 
 // routes
 import { ROUTES } from "@/routes";
 import { supabase } from "@/lib/initSupabase";
 import { TUserStatus } from "@/interfaces";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
-import { convertToRaw, EditorState } from "draft-js";
-import { SerializeMessage } from "@/utils/serializeMessage";
+import { EditorState } from "draft-js";
+import { useSendMessageMutation } from "@/queries/useSendMessageMutation";
 
 // ::
 const Dashboard = () => {
+  const {
+    mutate: handleSendMessage,
+    isLoading: messageLoading,
+    isError: messageError,
+  } = useSendMessageMutation();
+
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -34,11 +47,18 @@ const Dashboard = () => {
   const messages = useObserveMessages(channels?.id || 0);
 
   const sendMessage = async () => {
-    await supabase.from("messages").insert({
-      message: SerializeMessage(editorState),
-      user_id: userLoader?.sessionId,
-      channel_id: channels?.id,
-    });
+    handleSendMessage(
+      {
+        channelId: Number(channels?.id),
+        message: editorState,
+        userId: `${userLoader?.sessionId}`,
+      },
+      {
+        onSuccess: () => {
+          setEditorState(EditorState.createEmpty());
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -102,11 +122,20 @@ const Dashboard = () => {
         {channels?.id !== 0 && (
           <div className="flex w-full min-h-[70px] max-h-[300px] min-h-20 justify-center items-center bg-black-piano-2/80 px-6 gap-2">
             <TextEditor
+              disabledEditor={messageLoading}
               editorState={editorState}
               setEditorState={setEditorState}
             />
-            <Button onClick={() => sendMessage()}>
-              <PaperAirplaneIcon className="h-6 w-6" />
+            <Button
+              disabled={messageLoading}
+              className="max-h-12 max-w-12 bg-green-500 border-green-700"
+              onClick={() => sendMessage()}
+            >
+              {messageLoading ? (
+                <LoadingStatus size={25} />
+              ) : (
+                <PaperAirplaneIcon className="h-6 w-6" />
+              )}
             </Button>
           </div>
         )}

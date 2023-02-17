@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { supabase } from "@/lib/initSupabase";
 import { useQuery } from "@tanstack/react-query";
@@ -10,9 +10,11 @@ export const useGetChannelsInConnectionsQuery = () => {
     queryFn: async () => {
       const userId = (await supabase.auth.getSession()).data.session?.user.id;
       const { data: userConnections } = await supabase
-        .from("users")
-        .select(`connections`)
-        .eq("id", userId);
+        .from("connections")
+        .select("*")
+        .eq("user_id", userId);
+
+      console.log("connections", userConnections);
 
       const data = await supabase
         .from("channels")
@@ -20,7 +22,7 @@ export const useGetChannelsInConnectionsQuery = () => {
         .filter(
           "id",
           "in",
-          `(${userConnections?.map((item) => item?.connections).toString()})`
+          `(${userConnections?.map((item) => item?.channel_id).toString()})`
         );
 
       return data;

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { forwardRef } from "react";
 import { Slot } from "@radix-ui/react-slot";
@@ -16,7 +16,7 @@ const Button = forwardRef<HTMLButtonElement, TButton>(
         {...rest}
         ref={ref}
         className={twMerge(
-          "flex bg-indigo-600 border-b-4 border-indigo-900 cursor-pointer items-center justify-center gap-1 rounded-md p-2 text-white shadow-md transition-colors hover:bg-primary-dark-contrast",
+          "flex bg-blue-600 border-b-4 border-blue-900 cursor-pointer items-center justify-center gap-1 rounded-md p-2 text-white shadow-md transition-colors hover:bg-primary-dark-contrast",
           className
         )}
       >
