@@ -9,7 +9,7 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { THeaderProps } from "./types";
 
 // icons
-import PopMenu from "../PopMenu";
+import PopMenu from "../../Atoms/PopMenu";
 
 // ::
 const Header = ({ title }: THeaderProps) => {

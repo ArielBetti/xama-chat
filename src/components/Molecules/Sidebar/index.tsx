@@ -5,13 +5,13 @@ import {
   PlusSmallIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
-import ProfilePicture from "../ProfilePicture";
-import UserStatus from "../UserStatus";
+import ProfilePicture from "../../Atoms/ProfilePicture";
+import UserStatus from "../../Atoms/UserStatus";
 import { TSidebar } from "./types";
 
 // radix: components
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import PopMenu from "../PopMenu";
+import PopMenu from "../../Atoms/PopMenu";
 import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
 import { useGetChannelsInConnectionsQuery } from "@/queries/useGetChannelsInConnectionsQuery";
 import { useChannel, useChannelActions } from "@/store/channel";

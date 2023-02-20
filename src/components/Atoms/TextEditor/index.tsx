@@ -14,7 +14,11 @@ import { ContentState, convertToRaw } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { TTextEditorProps } from "./types";
 
-const TextEditor = ({ editorState, setEditorState, disabledEditor }: TTextEditorProps) => {
+const TextEditor = ({
+  editorState,
+  setEditorState,
+  disabledEditor,
+}: TTextEditorProps) => {
   const _contentState = ContentState.createFromText("");
   const raw = convertToRaw(_contentState); // RawDraftContentState JSON
   const [contentState, setContentState] = useState(raw); // ContentState JSON

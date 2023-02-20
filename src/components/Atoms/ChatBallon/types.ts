@@ -1,4 +1,4 @@
-import { IUser, TMessage } from "@/interfaces";
+import { TMessage } from "@/interfaces";
 
 export type TChatBallon = {
   message: TMessage;
