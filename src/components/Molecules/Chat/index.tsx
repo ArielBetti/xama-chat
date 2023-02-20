@@ -1,18 +1,24 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 // components
 import { ChatBallon } from "@/components";
 import useObserveMessages from "@/hooks/useObserveMessages";
 import { TChatProps } from "./type";
-import { useChannelActions, useMessageIsLoaded } from "@/store/channel";
+import {
+  useChannelActions,
+  useMessageIsLoaded,
+  useNewMessages,
+} from "@/store/channel";
+import { getScrollPosition } from "@/utils/getScrollPosition";
 
 // ::
 const Chat = ({ channel }: TChatProps) => {
+  const newMessages = useNewMessages();
+  const { setNewMessages } = useChannelActions();
   const chatRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const messages = useObserveMessages(channel);
   const messageLoaded = useMessageIsLoaded();
-  const { setIsLoaded } = useChannelActions();
 
   const handleScrollToLastMessage = (type: "load" | "message" = "message") => {
     if (type === "load") {
@@ -29,14 +35,17 @@ const Chat = ({ channel }: TChatProps) => {
   };
 
   useEffect(() => {
-    const scrollPosition =
-      ((Number(chatRef.current?.scrollTop) +
-        Number(chatRef.current?.clientHeight)) /
-        Number(chatRef.current?.scrollHeight)) *
-      100;
+    const scrollPosition = getScrollPosition({
+      clientHeight: Number(chatRef.current?.scrollTop),
+      scrollHeight: Number(chatRef.current?.clientHeight),
+      scrollTop: Number(chatRef.current?.scrollHeight),
+    });
 
     if (scrollPosition > 80) {
       handleScrollToLastMessage();
+    }
+    if (scrollPosition < 80) {
+      setNewMessages(newMessages + 1);
     }
   }, [messages]);
 
@@ -55,8 +64,18 @@ const Chat = ({ channel }: TChatProps) => {
 
   return (
     <div
+      onScrollCapture={(e) => {
+        const scrollPosition = getScrollPosition({
+          clientHeight: e.currentTarget?.clientHeight,
+          scrollHeight: e.currentTarget?.scrollHeight,
+          scrollTop: e.currentTarget?.scrollTop,
+        });
+        if (scrollPosition > 99) {
+          setNewMessages(0);
+        }
+      }}
       ref={chatRef}
-      className="gap-5 flex py-16 pb-5 flex-col md:px-10 px-4 max-w-5 xl h-full overflow-auto"
+      className="relative gap-5 flex py-16 pb-5 flex-col md:px-10 px-4 max-w-5 xl h-full overflow-auto"
     >
       {messages.map((message) => (
         <ChatBallon ref={lastMessageRef} key={message.id} message={message} />

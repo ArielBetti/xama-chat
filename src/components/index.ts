@@ -7,6 +7,7 @@ import PopMenu from "./Atoms/PopMenu";
 import ProfilePicture from "./Atoms/ProfilePicture";
 import TextEditor from "./Atoms/TextEditor";
 import UserStatus from "./Atoms/UserStatus";
+import Snackbar from "./Atoms/SnackBar";
 
 // molecules
 import Chat from "./Molecules/Chat";
@@ -25,4 +26,5 @@ export {
   Sidebar,
   TextEditor,
   UserStatus,
+  Snackbar
 };

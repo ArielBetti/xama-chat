@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 // hooks
 import useAmountAuthRoute from "@/hooks/useAmountAuthRoute";
-import useObserveMessages from "@/hooks/useObserveMessages";
 
 // store
 import { useChannel } from "@/store/channel";
@@ -14,10 +13,10 @@ import { useChannel } from "@/store/channel";
 import {
   Button,
   Chat,
-  ChatBallon,
   Header,
   LoadingStatus,
   Sidebar,
+  Snackbar,
   TextEditor,
 } from "@/components";
 
@@ -120,8 +119,9 @@ const Dashboard = () => {
         {channels?.id !== 0 && (
           <form
             onSubmit={(e) => sendMessage(e)}
-            className="flex w-full min-h-[70px] max-h-[300px] min-h-20 justify-center items-center bg-black-piano-2/80 px-6 gap-2"
+            className="flex relative w-full min-h-[70px] max-h-[300px] min-h-20 justify-center items-center bg-black-piano-2/80 px-6 gap-2"
           >
+            <Snackbar className="absolute -top-14"/>
             <TextEditor
               disabledEditor={messageLoading}
               editorState={editorState}
