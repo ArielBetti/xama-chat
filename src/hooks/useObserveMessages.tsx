@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { TMessage, TMessagesChanel } from "@/interfaces";
+import { TChannel, TMessage, TMessagesChanel } from "@/interfaces";
 import { supabase } from "@/lib/initSupabase";
+import { useChannelActions } from "@/store/channel";
 
-const useObserveMessages = (channelId: number) => {
+const useObserveMessages = (currentChannel: TChannel | null) => {
+  const { setIsLoaded } = useChannelActions();
   const channel = supabase.channel("user_messages");
   const [messages, setMessages] = useState<TMessage[]>([]);
 
@@ -20,16 +22,18 @@ const useObserveMessages = (channelId: number) => {
       )
       `
       )
-      .eq("channel_id", channelId);
+      .eq("channel_id", currentChannel?.id);
 
-    return setMessages(data || []);
+    setMessages(data || []);
+    setIsLoaded(true);
   };
 
   useEffect(() => {
+    setIsLoaded(false);
     setMessages([]);
     getHistoryMessages();
 
-    if (channelId) {
+    if (currentChannel?.id) {
       supabase.from("messages");
       channel
         .on(
@@ -52,11 +56,9 @@ const useObserveMessages = (channelId: number) => {
               )
               .eq("id", response?.new?.user_id);
 
-            Promise.all(data);
-
             if (
               response.eventType === "INSERT" &&
-              response.new?.channel_id === channelId
+              response.new?.channel_id === currentChannel?.id
             ) {
               setMessages((prev) => [
                 ...prev,
@@ -65,7 +67,7 @@ const useObserveMessages = (channelId: number) => {
             }
             if (
               response.eventType === "DELETE" &&
-              response.new?.channel_id === channelId
+              response.new?.channel_id === currentChannel?.id
             ) {
               setMessages((prev) =>
                 prev.filter((item) => item.id !== response.old.id)
@@ -79,7 +81,7 @@ const useObserveMessages = (channelId: number) => {
     () => {
       channel.unsubscribe();
     };
-  }, [channelId]);
+  }, [currentChannel]);
 
   return messages;
 };

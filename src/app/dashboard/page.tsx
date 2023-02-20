@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // hooks
@@ -13,6 +13,7 @@ import { useChannel } from "@/store/channel";
 // components
 import {
   Button,
+  Chat,
   ChatBallon,
   Header,
   LoadingStatus,
@@ -44,9 +45,10 @@ const Dashboard = () => {
   const { userLoader } = useAmountAuthRoute();
   const router = useRouter();
   const channels = useChannel();
-  const messages = useObserveMessages(channels?.id || 0);
 
-  const sendMessage = async () => {
+  const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     handleSendMessage(
       {
         channelId: Number(channels?.id),
@@ -114,22 +116,21 @@ const Dashboard = () => {
       />
       <div className="relative flex flex-col h-full w-full">
         <Header title={`${channels?.title}`} />
-        <div className="gap-5 flex py-16 pb-5 flex-col md:px-10 px-4 max-w-5 xl h-full overflow-auto">
-          {messages.map((message) => (
-            <ChatBallon key={message.id} message={message} />
-          ))}
-        </div>
+        <Chat channel={channels} />
         {channels?.id !== 0 && (
-          <div className="flex w-full min-h-[70px] max-h-[300px] min-h-20 justify-center items-center bg-black-piano-2/80 px-6 gap-2">
+          <form
+            onSubmit={(e) => sendMessage(e)}
+            className="flex w-full min-h-[70px] max-h-[300px] min-h-20 justify-center items-center bg-black-piano-2/80 px-6 gap-2"
+          >
             <TextEditor
               disabledEditor={messageLoading}
               editorState={editorState}
               setEditorState={setEditorState}
             />
             <Button
+              type="submit"
               disabled={messageLoading}
               className="max-h-12 max-w-12 bg-green-500 border-green-700"
-              onClick={() => sendMessage()}
             >
               {messageLoading ? (
                 <LoadingStatus size={25} />
@@ -137,7 +138,7 @@ const Dashboard = () => {
                 <PaperAirplaneIcon className="h-6 w-6" />
               )}
             </Button>
-          </div>
+          </form>
         )}
       </div>
     </div>

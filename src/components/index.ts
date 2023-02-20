@@ -1,17 +1,22 @@
-import Button from "./Button";
-import Card from "./Card";
-import ChatBallon from "./ChatBallon";
-import Header from "./Header";
-import LoadingStatus from "./LoadingStatus";
-import PopMenu from "./PopMenu";
-import ProfilePicture from "./ProfilePicture";
-import Sidebar from "./Sidebar";
-import TextEditor from "./TextEditor";
-import UserStatus from "./UserStatus";
+// atoms
+import Button from "./Atoms/Button";
+import Card from "./Atoms/Card";
+import ChatBallon from "./Atoms/ChatBallon";
+import LoadingStatus from "./Atoms/LoadingStatus";
+import PopMenu from "./Atoms/PopMenu";
+import ProfilePicture from "./Atoms/ProfilePicture";
+import TextEditor from "./Atoms/TextEditor";
+import UserStatus from "./Atoms/UserStatus";
+
+// molecules
+import Chat from "./Molecules/Chat";
+import Header from "./Molecules/Header";
+import Sidebar from "./Molecules/Sidebar";
 
 export {
   Button,
   Card,
+  Chat,
   ChatBallon,
   PopMenu,
   Header,

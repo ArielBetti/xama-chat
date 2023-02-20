@@ -14,8 +14,6 @@ export const useGetChannelsInConnectionsQuery = () => {
         .select("*")
         .eq("user_id", userId);
 
-      console.log("connections", userConnections);
-
       const data = await supabase
         .from("channels")
         .select(`*`)
