@@ -46,4 +46,6 @@ const ChatBallon = forwardRef<HTMLDivElement, TChatBallon>(
   }
 );
 
+ChatBallon.displayName = "ChatBallon";
+
 export default ChatBallon;
