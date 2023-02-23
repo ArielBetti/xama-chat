@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useRef } from "react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 
 // components
 import { ChatBallon } from "@/components";
@@ -6,56 +8,23 @@ import useObserveMessages from "@/hooks/useObserveMessages";
 import { TChatProps } from "./type";
 import {
   useChannelActions,
-  useMessageIsLoaded,
   useNewMessages,
 } from "@/store/channel";
-import { getScrollPosition } from "@/utils/getScrollPosition";
 
 // ::
 const Chat = ({ channel }: TChatProps) => {
+  const [lastRangeMessage, setLastRangeMessage] = useState(0);
   const newMessages = useNewMessages();
   const { setNewMessages } = useChannelActions();
-  const chatRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<VirtuosoHandle>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const messages = useObserveMessages(channel);
-  const messageLoaded = useMessageIsLoaded();
-
-  const handleScrollToLastMessage = (type: "load" | "message" = "message") => {
-    if (type === "load") {
-      chatRef.current?.scroll({
-        behavior: "smooth",
-        top: chatRef?.current?.scrollHeight,
-      });
-    }
-    if (type === "message") {
-      lastMessageRef.current?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }
-  };
 
   useEffect(() => {
-    const scrollPosition = getScrollPosition({
-      clientHeight: Number(chatRef.current?.scrollTop),
-      scrollHeight: Number(chatRef.current?.clientHeight),
-      scrollTop: Number(chatRef.current?.scrollHeight),
-    });
-
-    if (scrollPosition > 80) {
-      handleScrollToLastMessage();
-    }
-    if (scrollPosition < 80) {
+    if (lastRangeMessage > 0 && lastRangeMessage < messages?.length - 2)
       setNewMessages(newMessages + 1);
-    }
   }, [messages]);
-
-  useEffect(() => {
-    if (messageLoaded) {
-      setTimeout(() => {
-        handleScrollToLastMessage("load");
-      }, 250);
-    }
-  }, [messageLoaded]);
 
   if (messages.length === 0)
     return (
@@ -64,22 +33,23 @@ const Chat = ({ channel }: TChatProps) => {
 
   return (
     <div
-      onScrollCapture={(e) => {
-        const scrollPosition = getScrollPosition({
-          clientHeight: e.currentTarget?.clientHeight,
-          scrollHeight: e.currentTarget?.scrollHeight,
-          scrollTop: e.currentTarget?.scrollTop,
-        });
-        if (scrollPosition > 99) {
-          setNewMessages(0);
-        }
-      }}
-      ref={chatRef}
+      ref={containerRef}
       className="relative gap-5 flex py-16 pb-5 flex-col md:px-10 px-4 max-w-5 xl h-full overflow-auto"
     >
-      {messages.map((message) => (
-        <ChatBallon ref={lastMessageRef} key={message.id} message={message} />
-      ))}
+      <Virtuoso
+        alignToBottom
+        ref={chatRef}
+        atBottomStateChange={() => setNewMessages(0)}
+        rangeChanged={(range) => setLastRangeMessage(range.endIndex)}
+        followOutput={"smooth"}
+        initialTopMostItemIndex={messages.length}
+        style={{ height: "100%" }}
+        totalCount={messages.length}
+        data={messages}
+        itemContent={(_index, message) => (
+          <ChatBallon ref={lastMessageRef} key={message.id} message={message} />
+        )}
+      />
     </div>
   );
 };

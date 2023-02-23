@@ -30,7 +30,7 @@ const ChatBallon = forwardRef<HTMLDivElement, TChatBallon>(
               >
                 {message?.users?.username}
               </span>
-              <span className="text-xs">
+              <span className="text-xs text-zinc-500">
                 {Intl.DateTimeFormat("pt-BR", {
                   hour: "numeric",
                   dayPeriod: "short",
