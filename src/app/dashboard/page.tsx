@@ -27,9 +27,12 @@ import { TUserStatus } from "@/interfaces";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { EditorState } from "draft-js";
 import { useSendMessageMutation } from "@/queries/useSendMessageMutation";
+import { useGetUserSessionQuery } from "@/queries/useGetUserSessionQuery";
 
 // ::
 const Dashboard = () => {
+  useGetUserSessionQuery();
+
   const {
     mutate: handleSendMessage,
     isLoading: messageLoading,
@@ -63,10 +66,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (!userLoader?.email && userLoader !== undefined) {
-      router.push(ROUTES.LOGIN);
-    }
-
     if (userLoader?.email) {
       const channel = supabase.channel("user_status", {
         config: {

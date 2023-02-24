@@ -3,11 +3,23 @@ import { supabase } from "@/lib/initSupabase";
 import { Provider } from "@supabase/supabase-js";
 import { useMutation } from "@tanstack/react-query";
 
-export const useSignMutation = () => {
+type TUseSignMutation = {
+  provider: Provider;
+  redirectTo?: string;
+};
+
+export const useSignMutation = ({ provider, redirectTo }: TUseSignMutation) => {
   // Queries
+
+  console.log(redirectTo);
+
   return useMutation({
-    mutationFn: (provider: Provider) => supabase.auth.signInWithOAuth({
+    mutationFn: () =>
+      supabase.auth.signInWithOAuth({
         provider: provider,
+        options: {
+          redirectTo,
+        },
       }),
   });
 };

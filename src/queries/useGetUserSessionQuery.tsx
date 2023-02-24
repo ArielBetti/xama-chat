@@ -1,10 +1,13 @@
 "user client";
 
 import { supabase } from "@/lib/initSupabase";
+import { ROUTES } from "@/routes";
 import { useAuthActions } from "@/store/user";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export const useGetUserSessionQuery = () => {
+  const router = useRouter();
   const { setUser } = useAuthActions();
 
   // Queries
@@ -27,6 +30,8 @@ export const useGetUserSessionQuery = () => {
           name: `${response?.data?.session?.user.user_metadata?.name}`,
           picture: `${response?.data?.session?.user.user_metadata?.avatar_url}`,
         });
+      } else {
+        return router.push(ROUTES.LOGIN);
       }
 
       const { data: listener } = supabase.auth.onAuthStateChange(

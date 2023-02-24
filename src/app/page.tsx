@@ -5,31 +5,20 @@ import { useRouter } from "next/navigation";
 // routes
 import { ROUTES } from "@/routes";
 
-// zustand: states
-import { useUser } from "@/store/user";
-
 // queries & mutations
 import { useSignMutation } from "@/queries/useSignMutation";
 import { useGetUserSessionQuery } from "@/queries/useGetUserSessionQuery";
 
 // components
 import { Button, LoadingStatus } from "@/components";
-import useAmountAuthRoute from "@/hooks/useAmountAuthRoute";
-import { supabase } from "@/lib/initSupabase";
 
 // ::
 const Home = () => {
-  const router = useRouter();
-  const userLoader = useUser();
-
   const userSession = useGetUserSessionQuery();
-  const signWithGoogle = useSignMutation();
-
-  useEffect(() => {
-    if (userLoader?.email) {
-      router.push(ROUTES.DASHBOARD);
-    }
-  }, [userLoader]);
+  const signWithGoogle = useSignMutation({
+    provider: "google",
+    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.DASHBOARD}`,
+  });
 
   return (
     <main className="pattern-wavy pattern-blue-500 dark:pattern-zinc-800 dark:pattern-bg-zinc-900 pattern-bg-zinc-900 pattern-opacity-100 pattern-size-16">
@@ -44,7 +33,7 @@ const Home = () => {
           <div className="w-full flex gap-2 flex-wrap justify-center">
             <Button
               className="max-w-xs w-full font-semibold"
-              onClick={() => signWithGoogle.mutate("google")}
+              onClick={() => signWithGoogle.mutate()}
             >
               Login with Google
             </Button>
