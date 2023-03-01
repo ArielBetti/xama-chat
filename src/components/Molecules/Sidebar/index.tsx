@@ -16,15 +16,18 @@ import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
 import { useGetChannelsInConnectionsQuery } from "@/queries/useGetChannelsInConnectionsQuery";
 import { useChannel, useChannelActions } from "@/store/channel";
 import { useCreateChannelMutation } from "@/queries/useCreateChannelMutation";
+import { useSearchParams } from "next/navigation";
+import { useGetDeepLinkUserConnectionQuery } from "@/queries/useGetDeepLinkUserConnectionQuery";
 
 const Sidebar = ({ header, user, userStatus }: TSidebar) => {
+  const deepChannel = useSearchParams().get("channel");
+
   const { mutate: handleCreateChannel } = useCreateChannelMutation();
   const currentChannel = useChannel();
   const { setchannel } = useChannelActions();
 
-  const {
-    data: channels,
-  } = useGetChannelsInConnectionsQuery();
+  useGetDeepLinkUserConnectionQuery(Number(deepChannel), !!deepChannel);
+  const { data: channels } = useGetChannelsInConnectionsQuery();
   const logout = useSignOutUserMutation();
 
   return (

@@ -33,7 +33,6 @@ export const useGetUserSessionQuery = () => {
       } else {
         return router.push(ROUTES.LOGIN);
       }
-
       const { data: listener } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           await supabase

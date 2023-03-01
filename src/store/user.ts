@@ -1,18 +1,21 @@
-'use client'
+"use client";
 
-import { IUser } from "@/interfaces";
+import { IUser, TConnections } from "@/interfaces";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type AuthStore = {
+  channels: TConnections[];
   user: IUser | null;
   actions: {
+    setChannels: (channels: TConnections[]) => void;
     setUser: (user: IUser) => void;
     logout: () => void;
   };
 };
 
 const initialState = {
+  channels: [],
   user: {
     sessionId: "",
     name: "",
@@ -26,9 +29,10 @@ const useAuthStore = create<AuthStore>()(
     (set) => ({
       ...initialState,
       actions: {
+        setChannels: (channels) => set({ channels }),
         setUser: (user) => set({ user }),
         logout: () => {
-          set({ ...initialState })
+          set({ ...initialState });
         },
       },
     }),
@@ -41,5 +45,6 @@ const useAuthStore = create<AuthStore>()(
   )
 );
 
+export const useUserConnections = () => useAuthStore((state) => state.channels);
 export const useUser = () => useAuthStore((state) => state.user);
 export const useAuthActions = () => useAuthStore((state) => state.actions);

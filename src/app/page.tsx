@@ -15,10 +15,7 @@ import { Button, LoadingStatus } from "@/components";
 // ::
 const Home = () => {
   const userSession = useGetUserSessionQuery();
-  const signWithGoogle = useSignMutation({
-    provider: "google",
-    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.DASHBOARD}`,
-  });
+  const signWithGoogle = useSignMutation();
 
   return (
     <main className="pattern-wavy pattern-blue-500 dark:pattern-zinc-800 dark:pattern-bg-zinc-900 pattern-bg-zinc-900 pattern-opacity-100 pattern-size-16">
@@ -33,7 +30,14 @@ const Home = () => {
           <div className="w-full flex gap-2 flex-wrap justify-center">
             <Button
               className="max-w-xs w-full font-semibold"
-              onClick={() => signWithGoogle.mutate()}
+              onClick={() =>
+                signWithGoogle.mutate({
+                  provider: "google",
+                  options: {
+                    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.DASHBOARD}`,
+                  },
+                })
+              }
             >
               Login with Google
             </Button>

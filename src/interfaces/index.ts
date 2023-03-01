@@ -35,6 +35,14 @@ export type TChannel = {
   description?: string;
 };
 
+export type TConnections = {
+  id: number;
+  inserted_at: string;
+  slug: string;
+  created_by: string;
+  description?: string;
+};
+
 export interface TGoogleUserEndpoint {
   id: string;
   aud: string;
