@@ -7,44 +7,56 @@ import { ROUTES } from "@/routes";
 import { supabase } from "@/lib/initSupabase";
 import { useGetChannelInformationQuery } from "@/queries/useGetChannelInformationQuery";
 import Skeleton from "../skeleton";
+import { useGetAuthSessionQuery } from "@/queries/useGetAuthSessionQuery";
 
 const Invitation = ({ params: { id } }: { params: { id: number } }) => {
+  const { data: authData, isFetching: fetchingAuthData } =
+    useGetAuthSessionQuery();
   const { data, isFetching, isError } = useGetChannelInformationQuery(id);
   const userLoader = useUser();
   const signWithGoogle = useSignMutation();
 
   const handleAceptInvitation = async () => {
-    if (userLoader?.sessionId) {
-      const hasConnection = await supabase
-        .from("connections")
-        .select("*")
-        .eq("user_id", userLoader.sessionId);
+    const preCheck = await supabase.rpc("precheckchannel", {
+      channelid: `${userLoader?.sessionId}${data?.id}`,
+    });
 
-      if (!hasConnection) {
-        await supabase.from("connections").insert({
-          channel_id: id,
-          user_id: userLoader?.sessionId,
-        });
-      }
-
-      signWithGoogle.mutate({
-        provider: "google",
-        options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.DASHBOARD}?channel=${id}`,
-        },
-      });
-    } else {
-      signWithGoogle.mutate({
-        provider: "google",
-        options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.DASHBOARD}?channel=${id}`,
-        },
+    if (preCheck.data?.length === 0) {
+      console.log('caiu aqui');
+      await supabase.from("connections").insert({
+        id: `${userLoader?.sessionId}${data?.id}`,
+        channel_id: data?.id,
+        user_id: userLoader?.sessionId,
       });
     }
+
+    signWithGoogle.mutate({
+      provider: "google",
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.DASHBOARD}?channel=${data?.id}`,
+      },
+    });
   };
 
-  if (isFetching) {
+  if (isFetching || fetchingAuthData) {
     return <Skeleton />;
+  }
+
+  if (!authData?.data?.session?.access_token) {
+    return (
+      <div className="text-center container mx-auto px-4 flex flex-col items-center justify-center min-h-screen">
+        <h2 className="text-2xl">
+          Parece que você foi convidado para participar de uma comunidade.
+        </h2>
+        <p className="text-xl mt-5">Faça login para visualizar o convite!</p>
+        <Button
+          className="mt-10 max-w-xs w-full font-semibold"
+          onClick={() => handleAceptInvitation()}
+        >
+          Entrar com google
+        </Button>
+      </div>
+    );
   }
 
   if (!data && !isFetching) {

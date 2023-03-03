@@ -1,10 +1,9 @@
 // import { supabase } from '@/lib/initSupabase';
 import { supabase } from "@/lib/initSupabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { EditorState } from "draft-js";
 
 // utils
-import { SerializeMessage } from "@/utils/serializeMessage";
+import { useChannelActions } from "@/store/channel";
 
 // types
 export type TUseCreateChannelMutation = {
@@ -14,6 +13,7 @@ export type TUseCreateChannelMutation = {
 };
 
 export const useCreateChannelMutation = () => {
+  const { setchannel } = useChannelActions();
   const queryClient = useQueryClient();
 
   // Queries
@@ -30,12 +30,21 @@ export const useCreateChannelMutation = () => {
           created_by: userId,
           description,
         })
-        .select("id");
+        .select("*");
 
       await supabase.from("connections").insert({
+        id: `${userId}${data?.[0]?.id || crypto.randomUUID()}`,
         user_id: userId,
         channel_id: data?.[0]?.id,
       });
+
+      if (data?.[0]?.id) {
+        setchannel({
+          id: data?.[0]?.id,
+          title: data?.[0]?.slug,
+          description: data?.[0]?.description,
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["user-connections"]);

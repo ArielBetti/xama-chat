@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  ArrowLeftOnRectangleIcon,
-  PlusSmallIcon,
-} from "@heroicons/react/24/outline";
 import React from "react";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 import ProfilePicture from "../../Atoms/ProfilePicture";
 import UserStatus from "../../Atoms/UserStatus";
 import { TSidebar } from "./types";
@@ -15,14 +12,13 @@ import PopMenu from "../../Atoms/PopMenu";
 import { useSignOutUserMutation } from "@/queries/useSignOutUserMutation";
 import { useGetChannelsInConnectionsQuery } from "@/queries/useGetChannelsInConnectionsQuery";
 import { useChannel, useChannelActions } from "@/store/channel";
-import { useCreateChannelMutation } from "@/queries/useCreateChannelMutation";
 import { useSearchParams } from "next/navigation";
 import { useGetDeepLinkUserConnectionQuery } from "@/queries/useGetDeepLinkUserConnectionQuery";
+import CreateChannelDialog from "../CreateChannelDialog";
 
 const Sidebar = ({ header, user, userStatus }: TSidebar) => {
   const deepChannel = useSearchParams().get("channel");
 
-  const { mutate: handleCreateChannel } = useCreateChannelMutation();
   const currentChannel = useChannel();
   const { setchannel } = useChannelActions();
 
@@ -34,17 +30,7 @@ const Sidebar = ({ header, user, userStatus }: TSidebar) => {
     <div className="z-10 md:flex hidden max-w-xs w-full bg-black-piano-1/80 backdrop-blur-lg h-full flex-col justify-start items-center shadow-[0px_0px_5px_] shadow-black-piano-1">
       <div className="p-4 h-14 w-full flex items-center justify-between">
         <div>{header}</div>
-        <button
-          onClick={() =>
-            handleCreateChannel({
-              description: "qualquer coisa",
-              slug: "Teste 1",
-              userId: `${user?.sessionId}`,
-            })
-          }
-        >
-          <PlusSmallIcon className="h-6 w-6" />
-        </button>
+        <CreateChannelDialog />
       </div>
       <div className="h-full p-4 flex flex-col w-full overflow-auto gap-2">
         {channels?.data?.map((item) =>
