@@ -30,9 +30,8 @@ export const useGetUserSessionQuery = () => {
           name: `${response?.data?.session?.user.user_metadata?.name}`,
           picture: `${response?.data?.session?.user.user_metadata?.avatar_url}`,
         });
-      } else {
-        return router.push(ROUTES.LOGIN);
       }
+
       const { data: listener } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           await supabase
